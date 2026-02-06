@@ -7,7 +7,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import pdfplumber
 from docx import Document
-from io import BytesIO
 
 app = Flask(__name__)
 CORS(app)
@@ -61,6 +60,7 @@ def upload_resume():
         filename = file.filename.lower()
 
         if filename.endswith(".pdf"):
+            file.seek(0)  # reset pointer
             with pdfplumber.open(file) as pdf:
                 for page in pdf.pages:
                     page_text = page.extract_text()
@@ -68,8 +68,8 @@ def upload_resume():
                         text += page_text + "\n"
 
         elif filename.endswith(".docx"):
-            file_stream = BytesIO(file.read())
-            doc = Document(file_stream)
+            file.seek(0)  # reset pointer
+            doc = Document(file)
             for para in doc.paragraphs:
                 text += para.text + "\n"
 
