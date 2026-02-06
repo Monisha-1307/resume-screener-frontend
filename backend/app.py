@@ -165,6 +165,17 @@ def resume_summary():
     return jsonify({"summary": summary})
 
 # -------------------------------
+# API route: check Tesseract installation
+# -------------------------------
+@app.route('/check_tesseract')
+def check_tesseract():
+    try:
+        version = pytesseract.get_tesseract_version()
+        return jsonify({"tesseract_version": str(version)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+# -------------------------------
 # Run Flask app (local only)
 # -------------------------------
 if __name__ == '__main__':
