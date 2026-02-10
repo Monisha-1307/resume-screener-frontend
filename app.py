@@ -1,5 +1,4 @@
 import os
-import subprocess
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -8,7 +7,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import pdfplumber
 from docx import Document
-from PIL import Image
 import pytesseract
 
 app = Flask(__name__)
@@ -53,7 +51,7 @@ def calculate_similarity_with_keywords(resume_text, job_text):
     return round(similarity * 100, 2), common_words
 
 # -------------------------------
-# Upload resume (frontend expects /upload_resume)
+# Upload resume
 # -------------------------------
 @app.route('/upload_resume', methods=['POST'])
 def upload_resume():
@@ -159,17 +157,6 @@ def resume_summary():
         summary = "No specific technical skills detected in the resume."
 
     return jsonify({"summary": summary})
-
-# -------------------------------
-# Check Tesseract
-# -------------------------------
-@app.route('/check_tesseract')
-def check_tesseract():
-    try:
-        version = subprocess.check_output(['tesseract', '--version']).decode('utf-8').split('\n')[0]
-        return jsonify({"tesseract_version": version})
-    except Exception as e:
-        return jsonify({"error": str(e)})
 
 # -------------------------------
 # Run Flask app (local only)
