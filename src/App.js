@@ -10,9 +10,9 @@ function App() {
 
   // Upload resume file and extract text
   const handleUpload = async () => {
-    setError(""); 
-    setResumeText(""); 
-    setSummary(""); 
+    setError("");
+    setResumeText("");
+    setSummary("");
 
     if (!file) {
       setError("Please select a file before uploading.");
@@ -21,10 +21,10 @@ function App() {
 
     try {
       const formData = new FormData();
-      formData.append("resume", file);
+      formData.append("resume", file); // must match backend key
 
       const res = await axios.post(
-        "https://resume-screener-backend-dk4j.onrender.com/upload_resume",
+        "https://resume-screener-backend-1.onrender.com/upload_resume", // ✅ use correct backend URL
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -35,21 +35,27 @@ function App() {
         setError("No text was extracted from the resume. Try a different file.");
       }
     } catch (err) {
-      console.error("Error uploading resume:", err);
-      setError("Failed to upload or extract resume. Please check the backend.");
+      console.error("Error uploading resume:", err.response?.data || err.message);
+      setError("Failed to upload or extract resume. Please check the backend logs.");
     }
   };
 
   // Generate summary from extracted resume text
   const handleGenerateSummary = async () => {
+    if (!resumeText) {
+      setError("No resume text available to summarize.");
+      return;
+    }
+
     try {
       const res = await axios.post(
-        "https://resume-screener-backend-dk4j.onrender.com/resume_summary",
+        "https://resume-screener-backend-1.onrender.com/resume_summary", // ✅ consistent backend URL
         { resume: resumeText }
       );
       setSummary(res.data.summary);
     } catch (error) {
-      console.error("Error generating summary:", error);
+      console.error("Error generating summary:", error.response?.data || error.message);
+      setError("Failed to generate summary.");
     }
   };
 
