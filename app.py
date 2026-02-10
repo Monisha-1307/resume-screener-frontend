@@ -29,7 +29,7 @@ jwt = JWTManager(app)
 # -------------------------------
 @app.route('/ping')
 def ping():
-    return {"status": "ok"}
+    return jsonify({"status": "ok"})
 
 # -------------------------------
 # Root route
@@ -53,7 +53,7 @@ def calculate_similarity_with_keywords(resume_text, job_text):
     return round(similarity * 100, 2), common_words
 
 # -------------------------------
-# Upload resume (frontend expects /upload)
+# Upload resume (frontend expects /upload_resume)
 # -------------------------------
 @app.route('/upload_resume', methods=['POST'])
 def upload_resume():
@@ -167,9 +167,9 @@ def resume_summary():
 def check_tesseract():
     try:
         version = subprocess.check_output(['tesseract', '--version']).decode('utf-8').split('\n')[0]
-        return {"tesseract_version": version}
+        return jsonify({"tesseract_version": version})
     except Exception as e:
-        return {"error": str(e)}
+        return jsonify({"error": str(e)})
 
 # -------------------------------
 # Run Flask app (local only)

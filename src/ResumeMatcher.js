@@ -30,7 +30,7 @@ function ResumeMatcher({ resumeText }) {
   const handleCompare = async () => {
     try {
       const response = await axios.post(
-        "https://resume-screener-backend-dk4j.onrender.com/match_multiple",
+        "https://resume-screener-backend-1.onrender.com/match_multiple",
         {
           resume: resumeText,
           jobs: jobs

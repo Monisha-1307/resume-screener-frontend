@@ -24,7 +24,7 @@ function App() {
       formData.append("resume", file);
 
       const res = await axios.post(
-        "https://resume-screener-backend-dk4j.onrender.com/upload_resume",
+        "https://resume-screener-backend-1.onrender.com/upload_resume",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -44,7 +44,7 @@ function App() {
   const handleGenerateSummary = async () => {
     try {
       const res = await axios.post(
-        "https://resume-screener-backend-dk4j.onrender.com/resume_summary",
+        "https://resume-screener-backend-1.onrender.com/resume_summary",
         { resume: resumeText }
       );
       setSummary(res.data.summary);
