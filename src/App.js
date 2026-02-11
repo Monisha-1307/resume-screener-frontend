@@ -5,6 +5,7 @@ import ResumeMatcher from "./ResumeMatcher";
 function App() {
   const [file, setFile] = useState(null);
   const [resumeText, setResumeText] = useState("");
+  const [resumeId, setResumeId] = useState(null);   // ✅ new state for resume_id
   const [summary, setSummary] = useState("");
   const [error, setError] = useState("");
 
@@ -13,6 +14,7 @@ function App() {
     setError("");
     setResumeText("");
     setSummary("");
+    setResumeId(null);
 
     if (!file) {
       setError("Please select a file before uploading.");
@@ -21,16 +23,17 @@ function App() {
 
     try {
       const formData = new FormData();
-      formData.append("resume", file); // must match backend key
+      formData.append("resume", file);
 
       const res = await axios.post(
-        "https://resume-screener-backend-1.onrender.com/upload_resume", // ✅ use correct backend URL
+        "https://resume-screener-backend-1.onrender.com/upload_resume",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
       if (res.data.resume_text && res.data.resume_text.trim().length > 0) {
         setResumeText(res.data.resume_text);
+        setResumeId(res.data.resume_id);   // ✅ capture resume_id
       } else {
         setError("No text was extracted from the resume. Try a different file.");
       }
@@ -49,7 +52,7 @@ function App() {
 
     try {
       const res = await axios.post(
-        "https://resume-screener-backend-1.onrender.com/resume_summary", // ✅ consistent backend URL
+        "https://resume-screener-backend-1.onrender.com/resume_summary",
         { resume: resumeText }
       );
       setSummary(res.data.summary);
@@ -119,7 +122,8 @@ function App() {
       )}
 
       {/* Resume Matcher Component */}
-      <ResumeMatcher resumeText={resumeText} />
+      {/* ✅ pass resumeId into ResumeMatcher */}
+      <ResumeMatcher resumeText={resumeText} resumeId={resumeId} />
     </div>
   );
 }
