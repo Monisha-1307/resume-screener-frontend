@@ -30,15 +30,15 @@ function ResumeMatcher({ resumeText }) {
   const handleCompare = async () => {
     try {
       const response = await axios.post(
-        "https://resume-screener-backend-dk4j.onrender.com/match_multiple",
+        "https://resume-screener-backend-1.onrender.com/match_multiple", // ✅ fixed URL
         {
-          resume: resumeText,
-          jobs: jobs
+          resume: resumeText, // ✅ matches backend key
+          jobs: jobs          // ✅ matches backend key
         }
       );
       setResults(response.data.results);
     } catch (error) {
-      console.error("Error comparing resume:", error);
+      console.error("Error comparing resume:", error.response?.data || error.message);
     }
   };
 
