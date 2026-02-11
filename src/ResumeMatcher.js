@@ -32,8 +32,8 @@ function ResumeMatcher({ resumeText }) {
       const response = await axios.post(
         "https://resume-screener-backend-1.onrender.com/match_multiple", // ✅ fixed URL
         {
-          resume: resumeText, // ✅ matches backend key
-          jobs: jobs          // ✅ matches backend key
+          resume: resumeText,
+          jobs: jobs
         }
       );
       setResults(response.data.results);
@@ -123,20 +123,25 @@ function ResumeMatcher({ resumeText }) {
             placeholder="Job Title"
             value={job.title}
             onChange={(e) => updateJob(index, "title", e.target.value)}
+            className="form-control mb-2"
           />
-          <br />
           <textarea
             placeholder="Paste Job Description"
             value={job.description}
             onChange={(e) => updateJob(index, "description", e.target.value)}
+            className="form-control mb-2"
+            rows={4}
           />
-          <br />
-          <button onClick={() => removeJob(index)}>Remove</button>
+          <button className="btn btn-danger btn-sm" onClick={() => removeJob(index)}>
+            Remove
+          </button>
         </div>
       ))}
 
       {jobs.length > 0 && (
-        <button onClick={handleCompare}>Compare All</button>
+        <button className="btn btn-primary mt-3" onClick={handleCompare}>
+          Compare All
+        </button>
       )}
 
       {results.length > 0 && (
@@ -151,8 +156,9 @@ function ResumeMatcher({ resumeText }) {
             />
           </label>
 
-          <table border="1">
-            <thead>
+          {/* ✅ Styled Table */}
+          <table className="table table-striped table-bordered mt-3">
+            <thead className="table-dark">
               <tr>
                 <th>Job Title</th>
                 <th>Match Score (%)</th>
@@ -171,8 +177,8 @@ function ResumeMatcher({ resumeText }) {
           </table>
 
           <div style={{ marginTop: "10px" }}>
-            <button onClick={exportCSV}>Download CSV</button>
-            <button onClick={exportExcel} style={{ marginLeft: "10px" }}>
+            <button className="btn btn-success" onClick={exportCSV}>Download CSV</button>
+            <button className="btn btn-info ms-2" onClick={exportExcel}>
               Download Excel
             </button>
           </div>
