@@ -14,7 +14,7 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-function ResumeMatcher({ resumeText }) {
+function ResumeMatcher({ resumeText, resumeId }) {   // ✅ accept resumeId from App.js
   const [jobs, setJobs] = useState([]);
   const [results, setResults] = useState([]);
   const [threshold, setThreshold] = useState(0);
@@ -30,9 +30,10 @@ function ResumeMatcher({ resumeText }) {
   const handleCompare = async () => {
     try {
       const response = await axios.post(
-        "https://resume-screener-backend-1.onrender.com/match_multiple", // ✅ fixed URL
+        "https://resume-screener-backend-1.onrender.com/match_multiple",
         {
           resume: resumeText,
+          resume_id: resumeId,   // ✅ send resume_id to backend
           jobs: jobs
         }
       );
@@ -156,7 +157,6 @@ function ResumeMatcher({ resumeText }) {
             />
           </label>
 
-          {/* ✅ Styled Table */}
           <table className="table table-striped table-bordered mt-3">
             <thead className="table-dark">
               <tr>
