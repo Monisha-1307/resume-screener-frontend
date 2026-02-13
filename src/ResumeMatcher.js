@@ -121,7 +121,7 @@ function ResumeMatcher({ resumeText, resumeId }) {
   };
 
   return (
-    <div className={`card mt-4 p-3 ${results.length > 0 ? "scroll-visible" : ""}`}>
+    <div className="card mt-4 p-3 scroll-visible">
       <h2 className="mb-3">Resume Matcher</h2>
       <button className="btn btn-outline-primary mb-3" onClick={addJob}>
         Add Job
@@ -168,7 +168,7 @@ function ResumeMatcher({ resumeText, resumeId }) {
       )}
 
       {results.length > 0 && (
-        <div style={{ marginTop: "20px" }}>
+        <div className={`card mt-4 p-3 ${results.length > 0 ? "scroll-visible" : ""}`}>
           <label>
             Minimum Match Score (%):{" "}
             <input
