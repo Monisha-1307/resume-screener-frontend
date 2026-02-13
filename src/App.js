@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ResumeMatcher from "./ResumeMatcher";
 
 function App() {
   const [file, setFile] = useState(null);
   const [resumeText, setResumeText] = useState("");
-  const [resumeId, setResumeId] = useState(null);   // ✅ new state for resume_id
+  const [resumeId, setResumeId] = useState(null);
   const [summary, setSummary] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // ✅ loader state
 
   // Upload resume file and extract text
   const handleUpload = async () => {
@@ -22,6 +23,7 @@ function App() {
     }
 
     try {
+      setLoading(true); // show loader
       const formData = new FormData();
       formData.append("resume", file);
 
@@ -33,13 +35,15 @@ function App() {
 
       if (res.data.resume_text && res.data.resume_text.trim().length > 0) {
         setResumeText(res.data.resume_text);
-        setResumeId(res.data.resume_id);   // ✅ capture resume_id
+        setResumeId(res.data.resume_id);
       } else {
         setError("No text was extracted from the resume. Try a different file.");
       }
     } catch (err) {
       console.error("Error uploading resume:", err.response?.data || err.message);
       setError("Failed to upload or extract resume. Please check the backend logs.");
+    } finally {
+      setLoading(false); // hide loader
     }
   };
 
@@ -51,6 +55,7 @@ function App() {
     }
 
     try {
+      setLoading(true); // show loader
       const res = await axios.post(
         "https://resume-screener-backend-1.onrender.com/resume_summary",
         { resume: resumeText }
@@ -59,12 +64,17 @@ function App() {
     } catch (error) {
       console.error("Error generating summary:", error.response?.data || error.message);
       setError("Failed to generate summary.");
+    } finally {
+      setLoading(false); // hide loader
     }
   };
 
   return (
     <div className="App container mt-4">
       <h1 className="mb-4">Resume Screener</h1>
+
+      {/* Loader */}
+      {loading && <div className="loader"></div>}
 
       {/* Upload Resume */}
       <div className="row mb-3">
@@ -92,37 +102,38 @@ function App() {
 
       {/* Show extracted resume text */}
       {resumeText && (
-        <div className="mt-4">
-          <h3>Extracted Resume Text</h3>
-          <pre
-            className="p-3 bg-light border rounded"
-            style={{ maxHeight: "200px", overflowY: "auto" }}
-          >
-            {resumeText}
-          </pre>
+        <div className="mt-4 card scroll-visible">
+          <div className="card-body">
+            <h3>Extracted Resume Text</h3>
+            <pre
+              className="p-3 bg-light border rounded"
+              style={{ maxHeight: "200px", overflowY: "auto" }}
+            >
+              {resumeText}
+            </pre>
 
-          {/* Generate Summary Button */}
-          <button
-            className="btn btn-secondary mt-3"
-            onClick={handleGenerateSummary}
-          >
-            Generate Resume Summary
-          </button>
+            {/* Generate Summary Button */}
+            <button
+              className="btn btn-secondary mt-3"
+              onClick={handleGenerateSummary}
+            >
+              Generate Resume Summary
+            </button>
 
-          {/* Show Summary */}
-          {summary && (
-            <div className="card mt-3">
-              <div className="card-body">
-                <h5 className="card-title">Resume Summary</h5>
-                <p className="card-text">{summary}</p>
+            {/* Show Summary */}
+            {summary && (
+              <div className="card mt-3">
+                <div className="card-body">
+                  <h5 className="card-title">Resume Summary</h5>
+                  <p className="card-text">{summary}</p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
 
       {/* Resume Matcher Component */}
-      {/* ✅ pass resumeId into ResumeMatcher */}
       <ResumeMatcher resumeText={resumeText} resumeId={resumeId} />
     </div>
   );
