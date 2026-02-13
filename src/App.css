@@ -1,38 +1,166 @@
+/* Main App container */
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
   min-height: 100vh;
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  animation: backgroundShift 15s infinite alternate;
+  font-family: 'Poppins', sans-serif;
 }
 
+/* Logo animations */
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+  animation: bounce 3s infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear, bounce 3s infinite;
+  }
+}
+
+/* Header styling */
+.App-header {
+  background: rgba(40, 44, 52, 0.85);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  font-size: calc(12px + 2vmin);
+  color: #fff;
+  animation: fadeInUp 2s ease-in-out;
+}
+
+/* Links */
 .App-link {
   color: #61dafb;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s, transform 0.3s;
 }
 
+.App-link:hover {
+  color: #ff6f61;
+  transform: scale(1.1);
+}
+
+/* Buttons */
+button {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  transition: transform 0.3s, background 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+button:hover {
+  transform: scale(1.1);
+  background: #357ABD;
+}
+
+/* Ripple effect on click */
+button::after {
+  content: "";
+  position: absolute;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: transform 0.5s, opacity 1s;
+}
+
+button:active::after {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+/* Cards for content blocks */
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  opacity: 0; /* hidden initially for scroll animation */
+  transform: translateY(30px);
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* Headings with glow */
+h1, h2 {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+/* Scroll-triggered animation class */
+.scroll-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+/* Loading Spinner */
+.loader {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #4a90e2; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Animations */
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes backgroundShift {
+  0% { background: linear-gradient(135deg, #ff9a9e, #fad0c4); }
+  50% { background: linear-gradient(135deg, #fbc2eb, #a6c1ee); }
+  100% { background: linear-gradient(135deg, #ffdde1, #ee9ca7); }
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 10px #ff6f61; }
+  to { text-shadow: 0 0 20px #4a90e2; }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
