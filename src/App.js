@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ResumeMatcher from "./ResumeMatcher";
+import './App.css';
 
 function App() {
   const [file, setFile] = useState(null);
