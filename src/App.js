@@ -11,7 +11,6 @@ function App() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Upload resume file and extract text
   const handleUpload = async () => {
     setError("");
     setResumeText("");
@@ -48,7 +47,6 @@ function App() {
     }
   };
 
-  // Generate summary from extracted resume text
   const handleGenerateSummary = async () => {
     if (!resumeText) {
       setError("No resume text available to summarize.");
@@ -100,7 +98,7 @@ function App() {
         )}
 
         {resumeText && (
-          <div className="mt-4 card scroll-visible">
+          <div className={`mt-4 card ${resumeText ? "scroll-visible" : ""}`}>
             <div className="card-body">
               <h3>Extracted Resume Text</h3>
               <pre
@@ -118,7 +116,7 @@ function App() {
               </button>
 
               {summary ? (
-                <div className="card mt-3">
+                <div className={`card mt-3 ${summary ? "scroll-visible" : ""}`}>
                   <div className="card-body">
                     <h5 className="card-title">Resume Summary</h5>
                     <p className="card-text">{summary}</p>
