@@ -168,7 +168,7 @@ function ResumeMatcher({ resumeText, resumeId }) {
       )}
 
       {results.length > 0 && (
-        <div className={`card mt-4 p-3 ${results.length > 0 ? "scroll-visible" : ""}`}>
+        <div className={`card mt-4 p-3 scroll-visible`}>
           <label>
             Minimum Match Score (%):{" "}
             <input
