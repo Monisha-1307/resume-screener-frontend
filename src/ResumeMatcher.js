@@ -121,7 +121,7 @@ function ResumeMatcher({ resumeText, resumeId }) {
   };
 
   return (
-    <div className="card mt-4 p-3 scroll-visible">
+    <div className={`card mt-4 p-3 ${results.length > 0 ? "scroll-visible" : ""}`}>
       <h2 className="mb-3">Resume Matcher</h2>
       <button className="btn btn-outline-primary mb-3" onClick={addJob}>
         Add Job
@@ -211,7 +211,7 @@ function ResumeMatcher({ resumeText, resumeId }) {
 
           <h3 className="mt-4">Highlighted Job Descriptions</h3>
           {filteredResults.map((r, i) => (
-            <div key={i} className="card p-3 mb-3">
+            <div key={i} className="card p-3 mb-3 scroll-visible">
               <h4>{r.title}</h4>
               <p>{highlightText(jobs[i].description, r.keywords)}</p>
             </div>
