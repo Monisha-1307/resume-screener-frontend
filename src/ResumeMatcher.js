@@ -19,6 +19,7 @@ function ResumeMatcher({ resumeText, resumeId }) {
   const [results, setResults] = useState([]);
   const [threshold, setThreshold] = useState(0);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const addJob = () => setJobs([...jobs, { title: "", description: "" }]);
   const removeJob = (index) => setJobs(jobs.filter((_, i) => i !== index));
@@ -32,13 +33,10 @@ function ResumeMatcher({ resumeText, resumeId }) {
     setError("");
     setResults([]);
     try {
+      setLoading(true);
       const response = await axios.post(
         "https://resume-screener-backend-1.onrender.com/match_multiple",
-        {
-          resume: resumeText,
-          resume_id: resumeId,
-          jobs
-        }
+        { resume: resumeText, resume_id: resumeId, jobs }
       );
       if (response.data && response.data.results) {
         setResults(response.data.results);
@@ -48,6 +46,8 @@ function ResumeMatcher({ resumeText, resumeId }) {
     } catch (error) {
       console.error("Error comparing resume:", error.response?.data || error.message);
       setError("Failed to compare resume. Please check backend logs.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -155,13 +155,15 @@ function ResumeMatcher({ resumeText, resumeId }) {
         </button>
       )}
 
+      {loading && <div className="loader"></div>}
+
       {error && (
         <div className="alert alert-danger mt-3" role="alert">
           {error}
         </div>
       )}
 
-      {results.length === 0 && !error && jobs.length > 0 && (
+      {results.length === 0 && !error && jobs.length > 0 && !loading && (
         <p className="mt-3 text-muted">No results yet. Click Compare All to see matches.</p>
       )}
 
