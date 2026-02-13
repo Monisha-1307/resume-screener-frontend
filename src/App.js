@@ -11,6 +11,7 @@ function App() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Upload resume file and extract text
   const handleUpload = async () => {
     setError("");
     setResumeText("");
@@ -47,6 +48,7 @@ function App() {
     }
   };
 
+  // Generate summary from extracted resume text
   const handleGenerateSummary = async () => {
     if (!resumeText) {
       setError("No resume text available to summarize.");
@@ -75,6 +77,7 @@ function App() {
 
         {loading && <div className="loader"></div>}
 
+        {/* Upload Resume */}
         <div className="row mb-3">
           <div className="col-md-8">
             <input
@@ -91,12 +94,14 @@ function App() {
           </div>
         </div>
 
+        {/* Error Message */}
         {error && (
           <div className="alert alert-danger mt-3" role="alert">
             {error}
           </div>
         )}
 
+        {/* Show extracted resume text */}
         {resumeText && (
           <div className={`mt-4 card ${resumeText ? "scroll-visible" : ""}`}>
             <div className="card-body">
@@ -108,6 +113,7 @@ function App() {
                 {resumeText}
               </pre>
 
+              {/* Generate Summary Button */}
               <button
                 className="btn btn-secondary mt-3"
                 onClick={handleGenerateSummary}
@@ -115,6 +121,7 @@ function App() {
                 Generate Resume Summary
               </button>
 
+              {/* Show Summary */}
               {summary ? (
                 <div className={`card mt-3 ${summary ? "scroll-visible" : ""}`}>
                   <div className="card-body">
@@ -129,6 +136,7 @@ function App() {
           </div>
         )}
 
+        {/* Resume Matcher Component */}
         <ResumeMatcher resumeText={resumeText} resumeId={resumeId} />
       </div>
     </div>
