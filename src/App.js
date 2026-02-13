@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import ResumeMatcher from "./ResumeMatcher";
 import './App.css';
@@ -9,7 +9,7 @@ function App() {
   const [resumeId, setResumeId] = useState(null);
   const [summary, setSummary] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // ✅ loader state
+  const [loading, setLoading] = useState(false);
 
   // Upload resume file and extract text
   const handleUpload = async () => {
@@ -24,7 +24,7 @@ function App() {
     }
 
     try {
-      setLoading(true); // show loader
+      setLoading(true);
       const formData = new FormData();
       formData.append("resume", file);
 
@@ -44,7 +44,7 @@ function App() {
       console.error("Error uploading resume:", err.response?.data || err.message);
       setError("Failed to upload or extract resume. Please check the backend logs.");
     } finally {
-      setLoading(false); // hide loader
+      setLoading(false);
     }
   };
 
@@ -56,86 +56,83 @@ function App() {
     }
 
     try {
-      setLoading(true); // show loader
+      setLoading(true);
       const res = await axios.post(
         "https://resume-screener-backend-1.onrender.com/resume_summary",
         { resume: resumeText }
       );
-      setSummary(res.data.summary);
+      setSummary(res.data.summary || "No summary returned from backend.");
     } catch (error) {
       console.error("Error generating summary:", error.response?.data || error.message);
       setError("Failed to generate summary.");
     } finally {
-      setLoading(false); // hide loader
+      setLoading(false);
     }
   };
 
   return (
-    <div className="App container mt-4">
-      <h1 className="mb-4">Resume Screener</h1>
+    <div className="App">
+      <div className="container mt-4">
+        <h1 className="mb-4">Resume Screener</h1>
 
-      {/* Loader */}
-      {loading && <div className="loader"></div>}
+        {loading && <div className="loader"></div>}
 
-      {/* Upload Resume */}
-      <div className="row mb-3">
-        <div className="col-md-8">
-          <input
-            type="file"
-            accept=".pdf,.docx,.txt"
-            onChange={(e) => setFile(e.target.files[0])}
-            className="form-control"
-          />
-        </div>
-        <div className="col-md-4 d-flex align-items-center">
-          <button className="btn btn-primary w-100" onClick={handleUpload}>
-            Upload
-          </button>
-        </div>
-      </div>
-
-      {/* Error Message */}
-      {error && (
-        <div className="alert alert-danger mt-3" role="alert">
-          {error}
-        </div>
-      )}
-
-      {/* Show extracted resume text */}
-      {resumeText && (
-        <div className="mt-4 card scroll-visible">
-          <div className="card-body">
-            <h3>Extracted Resume Text</h3>
-            <pre
-              className="p-3 bg-light border rounded"
-              style={{ maxHeight: "200px", overflowY: "auto" }}
-            >
-              {resumeText}
-            </pre>
-
-            {/* Generate Summary Button */}
-            <button
-              className="btn btn-secondary mt-3"
-              onClick={handleGenerateSummary}
-            >
-              Generate Resume Summary
+        <div className="row mb-3">
+          <div className="col-md-8">
+            <input
+              type="file"
+              accept=".pdf,.docx,.txt"
+              onChange={(e) => setFile(e.target.files[0])}
+              className="form-control"
+            />
+          </div>
+          <div className="col-md-4 d-flex align-items-center">
+            <button className="btn btn-primary w-100" onClick={handleUpload}>
+              Upload
             </button>
-
-            {/* Show Summary */}
-            {summary && (
-              <div className="card mt-3">
-                <div className="card-body">
-                  <h5 className="card-title">Resume Summary</h5>
-                  <p className="card-text">{summary}</p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
-      )}
 
-      {/* Resume Matcher Component */}
-      <ResumeMatcher resumeText={resumeText} resumeId={resumeId} />
+        {error && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {error}
+          </div>
+        )}
+
+        {resumeText && (
+          <div className="mt-4 card scroll-visible">
+            <div className="card-body">
+              <h3>Extracted Resume Text</h3>
+              <pre
+                className="p-3 bg-light border rounded"
+                style={{ maxHeight: "200px", overflowY: "auto" }}
+              >
+                {resumeText}
+              </pre>
+
+              <button
+                className="btn btn-secondary mt-3"
+                onClick={handleGenerateSummary}
+              >
+                Generate Resume Summary
+              </button>
+
+              {summary ? (
+                <div className="card mt-3">
+                  <div className="card-body">
+                    <h5 className="card-title">Resume Summary</h5>
+                    <p className="card-text">{summary}</p>
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-3 text-muted">No summary generated yet.</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        <ResumeMatcher resumeText={resumeText} resumeId={resumeId} />
+      </div>
     </div>
   );
 }
