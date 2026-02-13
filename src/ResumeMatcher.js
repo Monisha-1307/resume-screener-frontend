@@ -14,10 +14,11 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-function ResumeMatcher({ resumeText, resumeId }) {   // ✅ accept resumeId from App.js
+function ResumeMatcher({ resumeText, resumeId }) {
   const [jobs, setJobs] = useState([]);
   const [results, setResults] = useState([]);
   const [threshold, setThreshold] = useState(0);
+  const [error, setError] = useState("");
 
   const addJob = () => setJobs([...jobs, { title: "", description: "" }]);
   const removeJob = (index) => setJobs(jobs.filter((_, i) => i !== index));
@@ -28,18 +29,25 @@ function ResumeMatcher({ resumeText, resumeId }) {   // ✅ accept resumeId from
   };
 
   const handleCompare = async () => {
+    setError("");
+    setResults([]);
     try {
       const response = await axios.post(
         "https://resume-screener-backend-1.onrender.com/match_multiple",
         {
           resume: resumeText,
-          resume_id: resumeId,   // ✅ send resume_id to backend
-          jobs: jobs
+          resume_id: resumeId,
+          jobs
         }
       );
-      setResults(response.data.results);
+      if (response.data && response.data.results) {
+        setResults(response.data.results);
+      } else {
+        setError("No results returned from backend.");
+      }
     } catch (error) {
       console.error("Error comparing resume:", error.response?.data || error.message);
+      setError("Failed to compare resume. Please check backend logs.");
     }
   };
 
@@ -113,12 +121,14 @@ function ResumeMatcher({ resumeText, resumeId }) {   // ✅ accept resumeId from
   };
 
   return (
-    <div>
-      <h2>Resume Matcher</h2>
-      <button onClick={addJob}>Add Job</button>
+    <div className="card mt-4 p-3 scroll-visible">
+      <h2 className="mb-3">Resume Matcher</h2>
+      <button className="btn btn-outline-primary mb-3" onClick={addJob}>
+        Add Job
+      </button>
 
       {jobs.map((job, index) => (
-        <div key={index} style={{ marginBottom: "15px" }}>
+        <div key={index} className="mb-3">
           <input
             type="text"
             placeholder="Job Title"
@@ -143,6 +153,16 @@ function ResumeMatcher({ resumeText, resumeId }) {   // ✅ accept resumeId from
         <button className="btn btn-primary mt-3" onClick={handleCompare}>
           Compare All
         </button>
+      )}
+
+      {error && (
+        <div className="alert alert-danger mt-3" role="alert">
+          {error}
+        </div>
+      )}
+
+      {results.length === 0 && !error && jobs.length > 0 && (
+        <p className="mt-3 text-muted">No results yet. Click Compare All to see matches.</p>
       )}
 
       {results.length > 0 && (
@@ -187,9 +207,9 @@ function ResumeMatcher({ resumeText, resumeId }) {   // ✅ accept resumeId from
             <Bar data={chartData} options={chartOptions} />
           </div>
 
-          <h3>Highlighted Job Descriptions</h3>
+          <h3 className="mt-4">Highlighted Job Descriptions</h3>
           {filteredResults.map((r, i) => (
-            <div key={i} style={{ marginBottom: "15px" }}>
+            <div key={i} className="card p-3 mb-3">
               <h4>{r.title}</h4>
               <p>{highlightText(jobs[i].description, r.keywords)}</p>
             </div>
