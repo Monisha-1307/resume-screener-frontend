@@ -205,17 +205,22 @@ function ResumeMatcher({ resumeText, resumeId }) {
             </button>
           </div>
 
-          <div style={{ marginTop: "20px" }}>
-            <Bar data={chartData} options={chartOptions} />
-          </div>
+          {filteredResults.length > 0 && (
+            <div style={{ marginTop: "20px" }}>
+              <Bar data={chartData} options={chartOptions} />
+            </div>
+          )}
 
           <h3 className="mt-4">Highlighted Job Descriptions</h3>
-          {filteredResults.map((r, i) => (
-            <div key={i} className="card p-3 mb-3 scroll-visible">
-              <h4>{r.title}</h4>
-              <p>{highlightText(jobs[i].description, r.keywords)}</p>
-            </div>
-          ))}
+          {filteredResults.map((r, i) => {
+            const job = jobs.find(j => j.title === r.title);
+            return (
+              <div key={i} className="card p-3 mb-3 scroll-visible">
+                <h4>{r.title}</h4>
+                <p>{highlightText(job?.description || "", r.keywords)}</p>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
