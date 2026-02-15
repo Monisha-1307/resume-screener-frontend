@@ -65,13 +65,19 @@ function ResumeMatcher({ resumeText, resumeId }) {
     );
   };
 
+  const normalizeKeywords = (keywords) => {
+    if (Array.isArray(keywords)) return keywords;
+    if (typeof keywords === "string") return keywords.split(",").map(k => k.trim()).filter(k => k);
+    return [];
+  };
+
   const exportCSV = () => {
     if (results.length === 0) return;
     const header = ["Job Title", "Match Score (%)", "Matched Keywords"];
     const rows = results.map(r => [
       r.title,
       r.score,
-      r.keywords?.join(" | ") || "None"
+      normalizeKeywords(r.keywords).join(" | ") || "None"
     ]);
     const csvContent = [header, ...rows].map(e => e.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -89,7 +95,7 @@ function ResumeMatcher({ resumeText, resumeId }) {
     const worksheetData = results.map(r => ({
       "Job Title": r.title,
       "Match Score (%)": r.score,
-      "Matched Keywords": r.keywords?.join(" | ") || "None"
+      "Matched Keywords": normalizeKeywords(r.keywords).join(" | ") || "None"
     }));
     const worksheet = XLSX.utils.json_to_sheet(worksheetData);
     const workbook = XLSX.utils.book_new();
@@ -188,13 +194,16 @@ function ResumeMatcher({ resumeText, resumeId }) {
               </tr>
             </thead>
             <tbody>
-              {filteredResults.map((r, i) => (
-                <tr key={i}>
-                  <td>{r.title}</td>
-                  <td>{r.score}</td>
-                  <td>{r.keywords?.length > 0 ? r.keywords.join(", ") : "None"}</td>
-                </tr>
-              ))}
+              {filteredResults.map((r, i) => {
+                const keywords = normalizeKeywords(r.keywords);
+                return (
+                  <tr key={i}>
+                    <td>{r.title}</td>
+                    <td>{r.score}</td>
+                    <td>{keywords.length > 0 ? keywords.join(", ") : "None"}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 
@@ -214,10 +223,11 @@ function ResumeMatcher({ resumeText, resumeId }) {
           <h3 className="mt-4">Highlighted Job Descriptions</h3>
           {filteredResults.map((r, i) => {
             const job = jobs.find(j => j.title === r.title);
+            const keywords = normalizeKeywords(r.keywords);
             return (
               <div key={i} className="card p-3 mb-3 scroll-visible">
                 <h4>{r.title}</h4>
-                <p>{highlightText(job?.description || "", r.keywords)}</p>
+                <p>{highlightText(job?.description || "", keywords)}</p>
               </div>
             );
           })}
