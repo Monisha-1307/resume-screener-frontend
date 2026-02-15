@@ -51,11 +51,15 @@ function ResumeMatcher({ resumeText, resumeId }) {
     }
   };
 
+  // Escape regex special characters in keywords
+  const escapeRegex = (word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
   const highlightText = (text, keywords) => {
     if (!keywords || keywords.length === 0) return text;
-    const regex = new RegExp(`\\b(${keywords.join("|")})\\b`, "gi");
+    const escapedKeywords = keywords.map(escapeRegex);
+    const regex = new RegExp(`\\b(${escapedKeywords.join("|")})\\b`, "gi");
     return text.split(regex).map((part, i) =>
-      keywords.includes(part.toLowerCase()) ? (
+      keywords.some(k => k.toLowerCase() === part.toLowerCase()) ? (
         <span key={i} style={{ backgroundColor: "yellow", fontWeight: "bold" }}>
           {part}
         </span>
